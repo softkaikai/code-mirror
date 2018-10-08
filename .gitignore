@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
+=======
+>>>>>>> 0ce171984ca69eb3c251375ab466443d70bf993e
 # Logs
 logs
 *.log
@@ -59,6 +62,7 @@ typings/
 # dotenv environment variables file
 .env
 
+<<<<<<< HEAD
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
@@ -79,3 +83,7 @@ dist
 
 # IDE
 .idea
+=======
+# next.js build output
+.next
+>>>>>>> 0ce171984ca69eb3c251375ab466443d70bf993e
