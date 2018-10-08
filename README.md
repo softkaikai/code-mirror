@@ -1,5 +1,4 @@
 # code-mirror
-<<<<<<< HEAD
 
 > My astonishing Nuxt.js project
 
@@ -21,6 +20,4 @@ $ yarn run generate
 ```
 
 For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
-=======
-save code
->>>>>>> 0ce171984ca69eb3c251375ab466443d70bf993e
+
