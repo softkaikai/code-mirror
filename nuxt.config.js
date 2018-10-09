@@ -1,4 +1,5 @@
 const pkg = require('./package')
+const path = require('path')
 
 module.exports = {
   mode: 'spa',
@@ -21,12 +22,15 @@ module.exports = {
   /*
   ** Customize the progress-bar color
   */
-  loading: { color: '#fff' },
+  loading: { color: '#f60' },
 
   /*
   ** Global CSS
   */
   css: [
+    '~assets/css/reset.css',
+    {src: '~assets/css/mixin.less', lang: 'less'},
+    {src: '~assets/css/constant.less', lang: 'less'}
   ],
 
   /*
@@ -57,7 +61,8 @@ module.exports = {
     ** You can extend webpack config here
     */
     extend(config, ctx) {
-      
+      // less 不需要extend, npm install --save-dev less less-loader 就可以了
+
     }
   }
 }

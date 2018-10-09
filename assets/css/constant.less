@@ -1,0 +1,11 @@
+/*** 清除浮动 ***/
+.clearfix {
+  zoom: 1;
+  &:after {
+    clear: both;
+    content: "\0020";
+    display: block;
+    height: 0;
+    overflow: hidden;
+  }
+}

@@ -1,10 +1,14 @@
 <template>
-  <div>
+  <div id="container">
     <nuxt/>
   </div>
 </template>
 
 <style>
+  #container {
+    height: 100%;
+    overflow-y: auto;
+  }
 html {
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;

@@ -1,0 +1,39 @@
+/**
+ * .spaceMixin(5);
+ */
+.spaceMixin(@i) when (@i >= 0) {
+  .m-r-@{i} {
+    margin-right: @i + 0px;
+  }
+  .m-l-@{i} {
+    margin-left: @i + 0px;
+  }
+  .m-t-@{i} {
+    margin-top: @i + 0px;
+  }
+  .m-b-@{i} {
+    margin-bottom: @i + 0px;
+  }
+  .m-@{i} {
+    margin: @i + 0px;
+  }
+
+  .p-r-@{i} {
+    padding-right: @i + 0px;
+  }
+  .p-l-@{i} {
+    padding-left: @i + 0px;
+  }
+  .p-t-@{i} {
+    padding-top: @i + 0px;
+  }
+  .p-b-@{i} {
+    padding-bottom: @i + 0px;
+  }
+  .p-@{i} {
+    padding: @i + 0px;
+  }
+  .spaceMixin(@i - 5)
+}
+
+.spaceMixin(100);

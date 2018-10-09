@@ -17,6 +17,8 @@
     "@nuxtjs/axios": "^5.0.0"
   },
   "devDependencies": {
+    "less": "^3.8.1",
+    "less-loader": "^4.1.0",
     "nodemon": "^1.11.0"
   }
 }
