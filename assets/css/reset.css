@@ -53,6 +53,10 @@ table {
   border-spacing: 0;
 }
 
+input:focus, textarea:focus {
+  outline: none;
+}
+
 
 /* reset nuxt css */
 #__nuxt, #__layout {

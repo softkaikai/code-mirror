@@ -29,6 +29,7 @@ module.exports = {
   */
   css: [
     '~assets/css/reset.css',
+    '~assets/css/solarized-dark.css',
     {src: '~assets/css/mixin.less', lang: 'less'},
     {src: '~assets/css/constant.less', lang: 'less'}
   ],
@@ -37,6 +38,7 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { src: '~/plugins/highlight', ssr: false }
   ],
 
   /*
@@ -57,6 +59,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    vendor: ['~/plugins/highlight'],
     /*
     ** You can extend webpack config here
     */
