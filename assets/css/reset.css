@@ -57,6 +57,10 @@ input:focus, textarea:focus {
   outline: none;
 }
 
+button {
+  cursor: pointer;
+}
+
 
 /* reset nuxt css */
 #__nuxt, #__layout {

@@ -1,6 +1,7 @@
 <template>
   <div id="container">
     <nuxt/>
+    <notifications group="code-mirror" position="top left" />
   </div>
 </template>
 

@@ -38,7 +38,9 @@ module.exports = {
   ** Plugins to load before mounting the App
   */
   plugins: [
-    { src: '~/plugins/highlight', ssr: false }
+    { src: '~/plugins/highlight', ssr: false },
+    { src: '~/plugins/axios', ssr: false },
+    { src: '~/plugins/vue-notifications', ssr: false }
   ],
 
   /*
@@ -59,7 +61,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
-    vendor: ['~/plugins/highlight'],
+    vendor: ['~/plugins/highlight', 'vue-notifications', 'axios'],
     /*
     ** You can extend webpack config here
     */
