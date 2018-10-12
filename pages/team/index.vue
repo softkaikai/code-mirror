@@ -19,22 +19,33 @@
       <div class="f-l m-r-100">
         <p>我自己创建的团伙</p>
         <ul>
-          <li class="team-list" v-for="obj in teamList"
-              @click="jumpPage('/team/member')"
+          <li class="team-list" v-for="obj in searchOwn"
+              @click="jumpPage('/team/document', obj)"
           >
             {{obj.name}}
-            <i class="cha"></i>
+            <i class="cha" @click.stop="teamDelete(obj)"></i>
+          </li>
+        </ul>
+      </div>
+      <div class="f-l m-r-100">
+        <p>我加入的团伙</p>
+        <ul>
+          <li class="team-list" v-for="obj in searchJoin"
+              @click="jumpPage('/team/document', obj)"
+          >
+            {{obj.name}}
+            <i class="cha" @click.stop="teamDeleteTeam(obj)"></i>
           </li>
         </ul>
       </div>
       <div class="f-l">
-        <p>我加入的团伙</p>
+        <p>我未加入的团伙</p>
         <ul>
-          <li class="team-list" v-for="obj in teamList"
-              @click="jumpPage('/team/member')"
+          <li class="team-list" v-for="obj in searchForeign"
+              @click="jumpPage('/team/document', obj)"
           >
             {{obj.name}}
-            <i class="add"></i>
+            <i class="add" @click.stop="teamAddTeam(obj)"></i>
           </li>
         </ul>
       </div>
@@ -51,7 +62,10 @@
         newTeam: '',
         account: '',
         searchName: '',
-        teamList: []
+        teamList: [],
+        searchOwn: [],
+        searchJoin: [],
+        searchForeign: [],
       }
     },
     mounted() {
@@ -75,16 +89,53 @@
         api.teamFind({name: this.searchName, account: this.account}).then(res => {
           let data = res.data;
           if (data.code === '0') {
-            this.teamList = data.data || [];
-            console.log(this.teamList);
+            this.searchOwn = data.data.searchOwn;
+            this.searchJoin = data.data.searchJoin;
+            this.searchForeign = data.data.searchForeign;
           } else {
             this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
           }
         })
       },
-      jumpPage(path) {
+      teamDelete (data) {
+        api.teamDelete({id: data._id}).then(res => {
+          let data = res.data;
+          if (data.code === '0') {
+            this.teamFind();
+            this.$notify({ group: 'code-mirror', type: 'success', text: '删除成功'})
+          } else {
+            this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
+          }
+        })
+      },
+      teamAddTeam (data) {
+        api.teamAddTeam({id: data._id, account: this.account}).then(res => {
+          let data = res.data;
+          if (data.code === '0') {
+            this.teamFind();
+            this.$notify({ group: 'code-mirror', type: 'success', text: '新增成功'})
+          } else {
+            this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
+          }
+        })
+      },
+      teamDeleteTeam (data) {
+        api.teamDeleteTeam({id: data._id, account: this.account}).then(res => {
+          let data = res.data;
+          if (data.code === '0') {
+            this.teamFind();
+            this.$notify({ group: 'code-mirror', type: 'success', text: '删除成功'})
+          } else {
+            this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
+          }
+        })
+      },
+      jumpPage(path, data) {
         this.$router.push({
-          path
+          path,
+          query: {
+            id: data._id
+          }
         })
       }
     }

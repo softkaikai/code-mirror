@@ -64,5 +64,40 @@ Vue.use(function() {
         data: data
       })
     },
+    teamFindById(data) {
+      return http({
+        url: '/codeMirrorTeam/findById',
+        data: data
+      })
+    },
+    teamDelete(data) {
+      return http({
+        method: 'post',
+        url: '/codeMirrorTeam/delete',
+        data: data
+      })
+    },
+    teamAddTeam(data) {
+      return http({
+        method: 'post',
+        url: '/codeMirrorTeam/addTeam',
+        data: data
+      })
+    },
+    teamDeleteTeam(data) {
+      return http({
+        method: 'post',
+        url: '/codeMirrorTeam/deleteTeam',
+        data: data
+      })
+    },
+
+    docAdd(data) {
+      return http({
+        method: 'post',
+        url: '/codeMirrorDoc/add',
+        data: data
+      })
+    },
   }
 })

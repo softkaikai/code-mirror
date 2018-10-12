@@ -1,19 +1,34 @@
 <template>
   <section class="container">
     <div class="m-b-20 clearfix">
+      <p class="m-b-20">团伙老大：{{account}}</p>
+      <div>
+        <p class="m-b-20">团伙帮凶：</p>
+        <ul class="p-l-20">
+          <li class="member-list" v-for="obj in teamData.member"
+          >
+            {{obj}}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="m-b-20 clearfix">
       <p class="m-b-20">帮凶文档：</p>
       <ul class="p-l-20">
-        <li class="member-list" v-for="obj in teamList"
+        <li class="member-list" v-for="(obj, index) in teamData.docs"
+            @click="fillData(index)"
+            :class="{'member-list--active': obj.title === showTitle}"
         >
-          {{obj.name}}
+          {{obj.title}}
+          <i class="cha"></i>
         </li>
-        <li class="member-list doc-add">新增</li>
+        <li class="member-list doc-add" @click="addNewDoc">新增</li>
       </ul>
 
     </div>
     <hr>
     <section class="content">
-      <div class="content__l">
+      <!--<div class="content__l">
         <ul>
           <li class="team-list" v-for="obj in teamList"
               @click="jumpPage('/team/document')"
@@ -21,17 +36,18 @@
             {{obj.name}}
           </li>
         </ul>
-      </div>
+      </div>-->
       <div class="content__r">
         <div class="m-t-10 m-b-20">
-          <button type="button" @click="saveCode">修改</button>
-          <button type="button">删除</button>
+          <button type="button" v-show="!edit" @click="switchEdit">修改</button>
+          <button type="button" v-show="edit" @click="docAdd">保存</button>
         </div>
         <div class="code__box">
           <div>
             <label>
               武林秘籍：
-              <input type="text">
+              <input type="text" v-show="edit" v-model="docTitle">
+              <input type="text" v-show="!edit" v-model="showTitle" readonly>
             </label>
           </div>
 
@@ -44,7 +60,7 @@
           </div>
 
           <div class="code__pre">
-            <pre class="">
+            <pre class="" v-show="!edit">
               <code class="code p-20" v-for="item in sourceCodeList"
                     v-show="item.name === curCode"
                     v-html="item.code"
@@ -52,14 +68,17 @@
               </code>
             </pre>
 
-            <div class="code__textarea"
-                 v-for="item in editCodeList"
-                 v-show="item.name === curCode"
-            >
+            <div v-show="edit">
+              <div class="code__textarea"
+                   v-for="item in editCodeList"
+                   v-show="item.name === curCode"
+              >
               <textarea v-model="item.code">
 
               </textarea>
+              </div>
             </div>
+
           </div>
 
         </div>
@@ -75,6 +94,8 @@
   export default {
     data () {
       return {
+        account: '',
+        teamId: '',
         teamList: [
           {name: '文档1'},
           {name: '文档2'},
@@ -123,21 +144,98 @@
             code: '4',
           },
         ],
+        docTitle: '',
+        showTitle: '',
+        edit: false,
         isHtmlReg: /<(\/?[a-z]+?)>/g,
-        sourceCode: ''
+        sourceCode: '',
+        teamData: {
+          member: []
+        },
       }
     },
     mounted () {
-
-      let temp = hljs.highlightAuto('var a = 213')
-      console.log(temp);
-
+      this.account = localStorage.getItem('account');
+      this.teamId = this.$route.query.id;
+      this.teamFindById();
     },
     methods: {
       jumpPage(path) {
         this.$router.push({
           path
         })
+      },
+      teamFindById () {
+        api.teamFindById({id: this.teamId}).then(res => {
+          let data = res.data;
+          if (data.code === '0') {
+            this.teamData = data.data;
+            this.teamData.docs = this.teamData.docs || [];
+            this.fillData();
+            this.saveCode();
+            console.log(this.teamData);
+          } else {
+            this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
+          }
+        })
+      },
+      isSameTitle() {
+        for (let [index, val] of this.teamData.docs.entries()) {
+          if (val.title === this.docTitle) {
+            return false;
+          }
+        }
+        return true;
+      },
+      fillData (index = 0) {
+        let docs = this.teamData.docs;
+        if (docs.length) {
+          let doc = docs[index];
+          this.sourceCodeList[0].code = this.editCodeList[0].code = doc.other;
+          this.sourceCodeList[1].code = this.editCodeList[1].code = doc.js;
+          this.sourceCodeList[2].code = this.editCodeList[2].code = doc.css;
+          this.sourceCodeList[3].code = this.editCodeList[3].code = doc.html;
+          this.docTitle = doc.title;
+          this.showTitle = doc.title;
+        }
+      },
+      docAdd () {
+        if (!this.isSameTitle()) {
+          this.$notify({ group: 'code-mirror', type: 'error', text: '标题已存在'});
+          return false;
+        }
+        let apiData = {
+          id: this.teamId,
+          doc: {
+            title: this.docTitle,
+            other: this.editCodeList[0].code,
+            js: this.editCodeList[1].code,
+            css: this.editCodeList[2].code,
+            html: this.editCodeList[3].code,
+          }
+        };
+        api.docAdd(apiData).then(res => {
+          let data = res.data;
+          if (data.code === '0') {
+            this.teamFindById();
+            this.$notify({ group: 'code-mirror', type: 'success', text: '新增成功'})
+          } else {
+            this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
+          }
+          this.edit = false;
+        })
+      },
+      addNewDoc () {
+        this.edit = true;
+        this.docTitle = '';
+        this.showTitle = '';
+        this.sourceCodeList[0].code = this.editCodeList[0].code = '';
+        this.sourceCodeList[1].code = this.editCodeList[1].code = '';
+        this.sourceCodeList[2].code = this.editCodeList[2].code = '';
+        this.sourceCodeList[3].code = this.editCodeList[3].code = '';
+      },
+      switchEdit () {
+        this.edit = !this.edit;
       },
       inputCode() {
         console.log(this.sourceCode);
@@ -187,6 +285,8 @@
     cursor: pointer;
   }
   .member-list {
+    position: relative;
+
     float: left;
     margin-right: 10px;
     min-width: 54px;
@@ -198,6 +298,16 @@
     border-radius: 4px;
 
     cursor: pointer;
+  }
+  .member-list--active {
+    background: #07d;
+    color: #fff;
+    border-color: #07d;
+  }
+  .member-list:hover {
+    .cha {
+      display: block;
+    }
   }
   .doc-add {
     color: #07d;
@@ -212,7 +322,7 @@
   }
   .content__r {
     flex: 1;
-    padding-left: 10px;
+    padding-right: 10px;
   }
   .code__box {
     padding: 20px;
