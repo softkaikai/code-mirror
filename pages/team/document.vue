@@ -20,9 +20,10 @@
             :class="{'member-list--active': obj.title === showTitle}"
         >
           {{obj.title}}
-          <i class="cha"></i>
+          <i class="cha" @click="docDelete(obj)"></i>
         </li>
-        <li class="member-list doc-add" @click="addNewDoc">新增</li>
+        <li class="member-list doc-add"
+            @click="addNewDoc">新增</li>
       </ul>
 
     </div>
@@ -40,7 +41,8 @@
       <div class="content__r">
         <div class="m-t-10 m-b-20">
           <button type="button" v-show="!edit" @click="switchEdit">修改</button>
-          <button type="button" v-show="edit" @click="docAdd">保存</button>
+          <button type="button" v-show="edit" @click="docUpdate">更新</button>
+          <button type="button" v-show="edit" @click="docAdd">新增</button>
         </div>
         <div class="code__box">
           <div>
@@ -146,6 +148,7 @@
         ],
         docTitle: '',
         showTitle: '',
+        curIndex: '',
         edit: false,
         isHtmlReg: /<(\/?[a-z]+?)>/g,
         sourceCode: '',
@@ -191,6 +194,7 @@
         let docs = this.teamData.docs;
         if (docs.length) {
           let doc = docs[index];
+          this.curIndex = index;
           this.sourceCodeList[0].code = this.editCodeList[0].code = doc.other;
           this.sourceCodeList[1].code = this.editCodeList[1].code = doc.js;
           this.sourceCodeList[2].code = this.editCodeList[2].code = doc.css;
@@ -200,6 +204,10 @@
         }
       },
       docAdd () {
+        if (!this.docTitle) {
+          this.$notify({ group: 'code-mirror', type: 'error', text: '请填写标题'});
+          return false;
+        }
         if (!this.isSameTitle()) {
           this.$notify({ group: 'code-mirror', type: 'error', text: '标题已存在'});
           return false;
@@ -219,6 +227,49 @@
           if (data.code === '0') {
             this.teamFindById();
             this.$notify({ group: 'code-mirror', type: 'success', text: '新增成功'})
+          } else {
+            this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
+          }
+          this.edit = false;
+        })
+      },
+      docUpdate () {
+        if (!this.docTitle) {
+          this.$notify({ group: 'code-mirror', type: 'error', text: '请填写标题'});
+          return false;
+        }
+        if (this.curIndex === -1) {
+          this.$notify({ group: 'code-mirror', type: 'error', text: '索引错误'});
+          return false;
+        }
+        let apiData = {
+          id: this.teamId,
+          index: this.curIndex,
+          doc: {
+            title: this.docTitle,
+            other: this.editCodeList[0].code,
+            js: this.editCodeList[1].code,
+            css: this.editCodeList[2].code,
+            html: this.editCodeList[3].code,
+          }
+        };
+        api.docUpdate(apiData).then(res => {
+          let data = res.data;
+          if (data.code === '0') {
+            this.teamFindById();
+            this.$notify({ group: 'code-mirror', type: 'success', text: '更新成功'})
+          } else {
+            this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
+          }
+          this.edit = false;
+        })
+      },
+      docDelete (data) {
+        api.docDelete({id: this.teamId,title: data.title}).then(res => {
+          let data = res.data;
+          if (data.code === '0') {
+            this.teamFindById();
+            this.$notify({ group: 'code-mirror', type: 'success', text: '删除成功'})
           } else {
             this.$notify({ group: 'code-mirror', type: 'error', text: data.msg})
           }

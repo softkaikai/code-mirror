@@ -6,7 +6,7 @@ Vue.use(function() {
   function http(body) {
     let apiData = {
       method: 'get',
-      url: 'http://10.50.50.11:3334',
+      url: 'http://localhost:3334',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
       // headers: { 'content-type': 'application/json' },
       paramsSerializer: function (params) {
@@ -96,6 +96,20 @@ Vue.use(function() {
       return http({
         method: 'post',
         url: '/codeMirrorDoc/add',
+        data: data
+      })
+    },
+    docUpdate(data) {
+      return http({
+        method: 'post',
+        url: '/codeMirrorDoc/update',
+        data: data
+      })
+    },
+    docDelete(data) {
+      return http({
+        method: 'post',
+        url: '/codeMirrorDoc/delete',
         data: data
       })
     },
